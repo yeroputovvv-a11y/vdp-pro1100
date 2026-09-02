@@ -20,16 +20,16 @@
       <div class="card-head">
         <div>
           <h2>Шаблон Excel</h2>
-          <p class="muted">Скачайте шаблон, заполните строку «ЭТАЛОН» и данные ниже неё, затем загрузите файл обратно.</p>
+          <p class="muted">Скачайте шаблон, заполните его и загрузите обратно.</p>
         </div>
-        <a class="template-link" href="./VDP_PRO1100_template.xlsx" download>Скачать шаблон Excel</a>
+        <button id="downloadTemplate" class="secondary-btn" type="button">Скачать шаблон Excel</button>
       </div>
       <div class="rules">
         <div><b>Строка 1</b> — названия полей.</div>
-        <div><b>Строка 2</b> — эталонные значения, по ним программа будет искать переменные объекты в PDF.</div>
+        <div><b>Строка 2</b> — эталонные значения, по ним программа ищет переменные объекты в PDF.</div>
         <div><b>Строки 3+</b> — один ряд = один печатаемый экземпляр.</div>
-        <div>Пустая ячейка конкретного поля = это поле в данном экземпляре не заменять.</div>
-        <div>Строка с одним или несколькими пробелами всё равно считается резервным экземпляром и получает номер.</div>
+        <div>Пустая ячейка конкретного поля = в этом экземпляре поле не заменяется.</div>
+        <div>Строка только с пробелами тоже считается резервным экземпляром и получает номер.</div>
       </div>
     </section>
 
@@ -67,13 +67,14 @@
 
       <button id="prepare" disabled>ПРОВЕРИТЬ PDF И ДАННЫЕ</button>
       <div id="status" class="status">Выберите PDF и Excel.</div>
-      <div id="pdfNote" class="note">Пока подключена проверка структуры Excel. На следующем этапе добавим анализ всего PDF, поиск всех эталонных совпадений и точную замену текстовых объектов без перерисовки.</div>
+      <div id="pdfNote" class="note">Сейчас реализована проверка структуры Excel. Следующим этапом добавим анализ всего PDF, сравнение с эталонами и точную замену существующих текстовых объектов.</div>
     </section>
 
     <footer>VDP PRO 1100 • данные обрабатываются локально в браузере</footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
