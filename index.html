@@ -17,6 +17,23 @@
     </header>
 
     <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Шаблон Excel</h2>
+          <p class="muted">Скачайте шаблон, заполните строку «ЭТАЛОН» и данные ниже неё, затем загрузите файл обратно.</p>
+        </div>
+        <a class="template-link" href="./VDP_PRO1100_template.xlsx" download>Скачать шаблон Excel</a>
+      </div>
+      <div class="rules">
+        <div><b>Строка 1</b> — названия полей.</div>
+        <div><b>Строка 2</b> — эталонные значения, по ним программа будет искать переменные объекты в PDF.</div>
+        <div><b>Строки 3+</b> — один ряд = один печатаемый экземпляр.</div>
+        <div>Пустая ячейка конкретного поля = это поле в данном экземпляре не заменять.</div>
+        <div>Строка с одним или несколькими пробелами всё равно считается резервным экземпляром и получает номер.</div>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>1. PDF-шаблон</h2>
       <label class="upload">
         <input id="pdfFile" type="file" accept="application/pdf">
@@ -24,25 +41,36 @@
         <small id="pdfName">Файл не выбран</small>
       </label>
 
-      <h2>2. Excel со списком номеров</h2>
+      <h2>2. Excel с данными</h2>
       <label class="upload">
         <input id="xlsxFile" type="file" accept=".xlsx,.xls,.csv">
         <span>Выбрать Excel</span>
         <small id="xlsxName">Файл не выбран</small>
       </label>
 
-      <div class="info">
-        <div><b>Переменное поле:</b> Номер изделия</div>
-        <div><b>Повторений в экземпляре:</b> 3</div>
-        <div><b>Обработка:</b> локально в браузере</div>
+      <div id="summary" class="summary" hidden>
+        <div class="metric"><span>Общий тираж</span><strong id="totalPrint">0</strong></div>
+        <div class="metric"><span>С переменными данными</span><strong id="variablePrint">0</strong></div>
+        <div class="metric"><span>Резерв без данных</span><strong id="reservePrint">0</strong></div>
+        <div class="metric"><span>Переменных полей</span><strong id="fieldCount">0</strong></div>
       </div>
 
-      <button id="prepare" disabled>ПОДГОТОВИТЬ ФАЙЛ</button>
+      <div id="fields" class="fields" hidden>
+        <div class="section-title">Обнаруженные переменные</div>
+        <div id="fieldList"></div>
+      </div>
+
+      <div id="preview" class="preview" hidden>
+        <div class="section-title">Первые строки данных</div>
+        <div id="previewTable"></div>
+      </div>
+
+      <button id="prepare" disabled>ПРОВЕРИТЬ PDF И ДАННЫЕ</button>
       <div id="status" class="status">Выберите PDF и Excel.</div>
-      <a id="download" class="download" hidden>Скачать готовый PDF</a>
+      <div id="pdfNote" class="note">Пока подключена проверка структуры Excel. На следующем этапе добавим анализ всего PDF, поиск всех эталонных совпадений и точную замену текстовых объектов без перерисовки.</div>
     </section>
 
-    <footer>Учебная версия • сначала проверяем 3 номера, затем масштабируем до 1000+</footer>
+    <footer>VDP PRO 1100 • данные обрабатываются локально в браузере</footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
