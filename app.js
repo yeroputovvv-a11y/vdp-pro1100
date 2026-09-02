@@ -97,13 +97,13 @@ async function downloadExcelTemplate(event) {
   sheet.addRow(headers);
   sheet.addRow(reference);
 
-  // Up to 1000 data rows; numbering is generated automatically from entered content.
+  // Up to 1000 data rows. A row gets a number when any data cell contains anything, including a space.
   for (let r = 3; r <= 1002; r += 1) {
     sheet.getCell(r, 1).value = { formula: `IF(COUNTA(B${r}:F${r})>0,MAX($A$2:A${r-1})+1,"")` };
     for (let c = 2; c <= 6; c += 1) sheet.getCell(r, c).value = '';
   }
 
-  // Summary block remains at the top-right; it does not change the required first row/second row structure.
+  // Summary block at the top/right while keeping row 1 = headers and row 2 = reference values.
   sheet.getCell('H1').value = 'Показатель';
   sheet.getCell('I1').value = 'Значение';
   sheet.getCell('H2').value = 'Общий тираж';
@@ -123,11 +123,8 @@ async function downloadExcelTemplate(event) {
   sheet.getRow(2).alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
   sheet.getRow(1).height = 24;
   sheet.getRow(2).height = 24;
-
-  ['H1:I1'].forEach(r => {
-    sheet.getCell(r.split(':')[0]).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-  });
-  sheet.getRange = undefined;
+  sheet.getCell('H1').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  sheet.getCell('I1').font = { bold: true, color: { argb: 'FFFFFFFF' } };
   sheet.getCell('H1').fill = headerFill;
   sheet.getCell('I1').fill = headerFill;
   for (const addr of ['H2','H3','H4']) sheet.getCell(addr).font = { bold: true };
@@ -139,9 +136,7 @@ async function downloadExcelTemplate(event) {
     sheet.getCell(r, 1).alignment = { horizontal: 'center', vertical: 'middle' };
     sheet.getCell(r, 1).numFmt = '0';
   }
-  sheet.getColumn(1).numFmt = '0';
 
-  // Visual cue: example rows are intentionally shown only on the separate instruction sheet.
   const info = workbook.addWorksheet('Инструкция');
   info.mergeCells('A1:C1');
   info.getCell('A1').value = 'ШАБЛОН ДАННЫХ VDP PRO 1100';
