@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VDP PRO 1100</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="badge">VDP</div>
+      <div>
+        <h1>Подготовка переменных данных</h1>
+        <p>Konica Minolta bizhub PRO 1100</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>1. PDF-шаблон</h2>
+      <label class="upload">
+        <input id="pdfFile" type="file" accept="application/pdf">
+        <span>Выбрать PDF</span>
+        <small id="pdfName">Файл не выбран</small>
+      </label>
+
+      <h2>2. Excel со списком номеров</h2>
+      <label class="upload">
+        <input id="xlsxFile" type="file" accept=".xlsx,.xls,.csv">
+        <span>Выбрать Excel</span>
+        <small id="xlsxName">Файл не выбран</small>
+      </label>
+
+      <div class="info">
+        <div><b>Переменное поле:</b> Номер изделия</div>
+        <div><b>Повторений в экземпляре:</b> 3</div>
+        <div><b>Обработка:</b> локально в браузере</div>
+      </div>
+
+      <button id="prepare" disabled>ПОДГОТОВИТЬ ФАЙЛ</button>
+      <div id="status" class="status">Выберите PDF и Excel.</div>
+      <a id="download" class="download" hidden>Скачать готовый PDF</a>
+    </section>
+
+    <footer>Учебная версия • сначала проверяем 3 номера, затем масштабируем до 1000+</footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
