@@ -2,6 +2,7 @@ const pdfInput = document.getElementById('pdfFile');
 const xlsxInput = document.getElementById('xlsxFile');
 const prepare = document.getElementById('prepare');
 const status = document.getElementById('status');
+const templateBtn = document.getElementById('downloadTemplate');
 
 let pdf = null;
 let parsed = null;
@@ -12,25 +13,20 @@ function rawText(value) {
 }
 
 function hasAnyContent(value) {
-  return rawText(value).length > 0; // even one space counts for the print run
+  // One or more spaces count as an intentionally numbered/reserved row.
+  return rawText(value).length > 0;
 }
 
 function hasMeaningfulValue(value) {
   return rawText(value).trim().length > 0;
 }
 
-function rowUsed(row, fieldCount) {
-  for (let c = 0; c < fieldCount; c += 1) {
-    if (hasAnyContent(row[c])) return true;
-  }
-  return false;
+function rowUsed(row) {
+  return row.some(hasAnyContent);
 }
 
-function rowHasVariableData(row, fieldCount) {
-  for (let c = 0; c < fieldCount; c += 1) {
-    if (hasMeaningfulValue(row[c])) return true;
-  }
-  return false;
+function rowHasVariableData(row) {
+  return row.some(hasMeaningfulValue);
 }
 
 function escapeHtml(value) {
@@ -55,7 +51,7 @@ function resetAnalysis() {
 }
 
 function renderAnalysis(parsedData) {
-  const { headers, reference, records, usedRows, variableRows, reserveRows, variableFields } = parsedData;
+  const { headers, records, usedRows, variableRows, reserveRows, variableFields } = parsedData;
 
   document.getElementById('totalPrint').textContent = usedRows.length.toLocaleString('ru-RU');
   document.getElementById('variablePrint').textContent = variableRows.length.toLocaleString('ru-RU');
@@ -63,14 +59,13 @@ function renderAnalysis(parsedData) {
   document.getElementById('fieldCount').textContent = variableFields.length.toLocaleString('ru-RU');
   document.getElementById('summary').hidden = false;
 
-  const fieldRows = variableFields.map((field) => `
+  document.getElementById('fieldList').innerHTML = variableFields.map((field) => `
     <div class="field-row">
       <div class="field-name">${escapeHtml(field.name)}</div>
       <div class="field-reference">${field.reference === '' ? '<em>пустой эталон</em>' : escapeHtml(field.reference)}</div>
-      <div class="field-meta">${field.usedInData} строк${field.usedInData === 1 ? 'а' : field.usedInData < 5 ? 'и' : ''} с данными</div>
+      <div class="field-meta">${field.usedInData} экземпляров с заполнением</div>
     </div>
-  `).join('');
-  document.getElementById('fieldList').innerHTML = fieldRows || '<div class="empty">Переменные колонки не найдены.</div>';
+  `).join('') || '<div class="empty">Переменные колонки не найдены.</div>';
   document.getElementById('fields').hidden = false;
 
   const sample = records.slice(0, 8);
@@ -84,6 +79,88 @@ function renderAnalysis(parsedData) {
   `;
   document.getElementById('preview').hidden = false;
 }
+
+async function downloadExcelTemplate() {
+  if (!window.ExcelJS) {
+    status.textContent = 'Не удалось загрузить модуль создания Excel. Обновите страницу и повторите попытку.';
+    return;
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = 'VDP PRO 1100';
+  workbook.created = new Date();
+  const sheet = workbook.addWorksheet('Данные', { views: [{ state: 'frozen', ySplit: 2 }] });
+
+  const headers = ['№', 'Номер изделия', 'Фамилия', 'Имя', 'Отчество', 'Звание'];
+  const reference = ['ЭТАЛОН', '529260704929', 'Иванов', 'Иван', 'Иванович', 'майор'];
+  sheet.addRow(headers);
+  sheet.addRow(reference);
+
+  for (let r = 3; r <= 1002; r += 1) {
+    sheet.getCell(r, 1).value = { formula: `IF(COUNTA(B${r}:F${r})=0,"",MAX($A$2:A${r-1})+1)` };
+  }
+
+  // Clear instructional sample data from the editable rows: only the reference row is prefilled.
+  for (let r = 3; r <= 1002; r += 1) {
+    for (let c = 2; c <= 6; c += 1) sheet.getCell(r, c).value = '';
+  }
+
+  sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+  sheet.getRow(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+  sheet.getRow(2).font = { bold: true, italic: true, color: { argb: 'FF7C3AED' } };
+  sheet.getRow(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF2CC' } };
+  sheet.getRow(2).alignment = { horizontal: 'center', vertical: 'middle' };
+
+  sheet.getColumn(1).width = 8;
+  sheet.getColumn(2).width = 20;
+  sheet.getColumn(3).width = 20;
+  sheet.getColumn(4).width = 18;
+  sheet.getColumn(5).width = 22;
+  sheet.getColumn(6).width = 18;
+
+  sheet.getRow(2).height = 24;
+  for (let r = 3; r <= 1002; r += 1) sheet.getRow(r).height = 20;
+  for (let r = 1; r <= 1002; r += 1) {
+    sheet.getCell(r, 1).alignment = { horizontal: 'center', vertical: 'middle' };
+  }
+  sheet.getColumn(1).numFmt = '0';
+
+  const info = workbook.addWorksheet('Инструкция');
+  info.addRow(['ШАБЛОН ДАННЫХ VDP PRO 1100']);
+  info.mergeCells('A1:C1');
+  info.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 14 };
+  info.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+  info.getRow(1).alignment = { horizontal: 'center' };
+  [
+    ['Строка 1', 'Названия колонок.'],
+    ['Строка 2', 'Эталонные значения. Они используются для поиска переменных полей в PDF.'],
+    ['Строки 3+', 'Одна строка = один печатаемый экземпляр.'],
+    ['Пробел', 'Один или несколько пробелов в ячейке тоже делают строку частью общего тиража; такой экземпляр может быть резервным.'],
+    ['Пустая ячейка', 'Конкретное поле в этом экземпляре не заменяется.'],
+    ['Сводка', 'Веб-программа считает общий тираж, экземпляры с переменными данными и резерв.'],
+  ].forEach(row => info.addRow(row));
+  info.getColumn(1).width = 20;
+  info.getColumn(2).width = 85;
+  info.getColumn(3).width = 4;
+  info.getColumn(2).alignment = { wrapText: true, vertical: 'top' };
+  info.getColumn(1).font = { bold: true };
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'VDP_PRO1100_template.xlsx';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  status.textContent = 'Шаблон Excel скачан. Заполните строку «ЭТАЛОН» и данные ниже неё, затем загрузите файл обратно.';
+}
+
+templateBtn.addEventListener('click', downloadExcelTemplate);
 
 pdfInput.addEventListener('change', (event) => {
   pdf = event.target.files[0] || null;
@@ -121,7 +198,6 @@ xlsxInput.addEventListener('change', async (event) => {
 
     const headers = Array.from({ length: width }, (_, i) => rawText(matrix[0]?.[i] ?? ''));
     const reference = Array.from({ length: width }, (_, i) => rawText(matrix[1]?.[i] ?? ''));
-
     if (!headers.slice(1).some(Boolean)) throw new Error('В строке 1 нет названий переменных колонок.');
 
     const records = [];
@@ -131,9 +207,9 @@ xlsxInput.addEventListener('change', async (event) => {
 
     for (let sourceRow = 2; sourceRow < matrix.length; sourceRow += 1) {
       const row = Array.from({ length: width }, (_, i) => rawText(matrix[sourceRow]?.[i] ?? ''));
-      if (!rowUsed(row, width - 0)) continue;
+      if (!rowUsed(row.slice(1))) continue; // column № itself is generated by the program
 
-      const variable = rowHasVariableData(row.slice(1), width - 1);
+      const variable = rowHasVariableData(row.slice(1));
       const record = {
         index: usedRows.length + 1,
         sourceRow: sourceRow + 1,
@@ -152,28 +228,12 @@ xlsxInput.addEventListener('change', async (event) => {
       const name = headers[c];
       if (!name) continue;
       const usedInData = records.filter(r => hasMeaningfulValue(r.values[c])).length;
-      variableFields.push({
-        index: c,
-        name,
-        reference: reference[c],
-        usedInData,
-      });
+      variableFields.push({ index: c, name, reference: reference[c], usedInData });
     }
 
-    parsed = {
-      ok: true,
-      sheetName: book.SheetNames[0],
-      headers,
-      reference,
-      records,
-      usedRows,
-      variableRows,
-      reserveRows,
-      variableFields,
-    };
-
+    parsed = { ok: true, headers, reference, records, usedRows, variableRows, reserveRows, variableFields };
     renderAnalysis(parsed);
-    status.textContent = `Excel проверен: ${usedRows.length} пронумерованных экземпляров, из них ${variableRows.length} с переменными данными и ${reserveRows.length} резервных.`;
+    status.textContent = `Excel проверен: ${usedRows.length} экземпляров в тираже, ${variableRows.length} с переменными данными, ${reserveRows.length} резервных.`;
   } catch (error) {
     status.textContent = `Ошибка чтения Excel: ${error.message}`;
   }
@@ -183,7 +243,7 @@ xlsxInput.addEventListener('change', async (event) => {
 
 prepare.addEventListener('click', () => {
   if (!parsed || !pdf) return;
-  status.textContent = 'Структура данных принята. Следующий этап — полный анализ PDF и автоматический поиск всех совпадений с эталонами.';
+  status.textContent = 'Данные приняты. Следующий этап — полный анализ PDF, поиск всех эталонных совпадений и проверка количества мест замены.';
 });
 
 refreshButton();
