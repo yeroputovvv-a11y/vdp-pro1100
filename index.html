@@ -56,7 +56,7 @@
       </div>
 
       <div id="fields" class="fields" hidden>
-        <div class="section-title">Обнаруженные переменные</div>
+        <div class="section-title">Эталонные значения и совпадения в PDF</div>
         <div id="fieldList"></div>
       </div>
 
@@ -67,7 +67,7 @@
 
       <button id="prepare" disabled>ПРОВЕРИТЬ PDF И ДАННЫЕ</button>
       <div id="status" class="status">Выберите PDF и Excel.</div>
-      <div id="pdfNote" class="note">Сейчас реализована проверка структуры Excel. Следующим этапом добавим анализ всего PDF, сравнение с эталонами и точную замену существующих текстовых объектов.</div>
+      <div id="pdfNote" class="note">Анализ PDF выполняется локально в браузере. Программа ищет каждый эталон по всему документу и показывает число найденных совпадений до разрешения замены.</div>
     </section>
 
     <footer>VDP PRO 1100 • данные обрабатываются локально в браузере</footer>
@@ -75,6 +75,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
