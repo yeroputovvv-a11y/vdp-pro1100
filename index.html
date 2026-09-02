@@ -9,6 +9,7 @@
 <body>
   <main class="container">
     <header><div class="badge">VDP</div><div><h1>Подготовка переменных данных</h1><p>Konica Minolta bizhub PRO 1100</p></div></header>
+
     <section class="card">
       <div class="card-head">
         <div><h2>Шаблон Excel</h2><p class="muted">Скачайте шаблон, выберите нужное количество переменных полей и заполните его.</p></div>
@@ -22,28 +23,32 @@
       <div class="rules">
         <div><b>Строка 1</b> — названия переменных колонок.</div>
         <div><b>Строка 2</b> — эталонные значения для поиска во всём PDF.</div>
-        <div><b>Строки 5+</b> — один пронумерованный ряд = один печатаемый экземпляр.</div>
+        <div><b>Строки 3+</b> — один пронумерованный ряд = один печатаемый экземпляр.</div>
         <div><b>Пробел</b> в любой переменной ячейке тоже нумерует строку; без содержательных значений это резерв.</div>
       </div>
     </section>
+
     <section class="card">
       <h2>1. PDF-шаблон</h2>
       <label class="upload"><input id="pdfFile" type="file" accept="application/pdf"><span>Выбрать PDF</span><small id="pdfName">Файл не выбран</small></label>
       <h2>2. Excel с данными</h2>
       <label class="upload"><input id="xlsxFile" type="file" accept=".xlsx,.xls,.csv"><span>Выбрать Excel</span><small id="xlsxName">Файл не выбран</small></label>
+
       <div id="summary" class="summary" hidden><div class="metric"><span>Общий тираж</span><strong id="totalPrint">0</strong></div><div class="metric"><span>С переменными данными</span><strong id="variablePrint">0</strong></div><div class="metric"><span>Резерв без данных</span><strong id="reservePrint">0</strong></div><div class="metric"><span>Переменных полей</span><strong id="fieldCount">0</strong></div></div>
       <div id="fields" class="fields" hidden><div class="section-title">Эталонные значения и совпадения в PDF</div><div id="fieldList"></div></div>
       <div id="preview" class="preview" hidden><div class="section-title">Первые строки данных</div><div id="previewTable"></div></div>
+
       <button id="prepare" disabled>ПРОВЕРИТЬ PDF И ДАННЫЕ</button>
       <div id="status" class="status">Выберите PDF и Excel.</div>
       <div id="pdfNote" class="note">Анализ PDF выполняется локально в браузере.</div>
     </section>
+
     <footer>VDP PRO 1100 • данные обрабатываются локально в браузере</footer>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="app_v2.js?v=20260902-3"></script>
-  <script src="download_fix.js?v=20260902-2"></script>
+  <script src="app_v2.js"></script>
+  <script src="download_fix.js?v=4"></script>
 </body>
 </html>
