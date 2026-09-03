@@ -20,8 +20,9 @@
       <div class="rules">
         <div><b>Строка 1</b> — названия переменных колонок.</div>
         <div><b>Строка 2</b> — эталонные значения для поиска во всём PDF.</div>
-        <div><b>Строки 3+</b> — один пронумерованный ряд = один печатаемый экземпляр.</div>
-        <div><b>Пробел</b> в любой переменной ячейке тоже нумерует строку; без содержательных значений это резерв.</div>
+        <div><b>Строки 3+</b> — данные заказа.</div>
+        <div><b>Любой символ, включая пробел</b> в переменной ячейке включает строку в общий тираж и даёт ей сквозной номер.</div>
+        <div><b>Полностью пустая строка</b> не нумеруется и не входит в тираж.</div>
       </div>
     </section>
     <section class="card">
@@ -40,6 +41,6 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="app_v4.js?v=1"></script>
+  <script src="app_v4.js?v=2"></script>
 </body>
 </html>
