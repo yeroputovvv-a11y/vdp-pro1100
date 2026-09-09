@@ -1,0 +1,1 @@
+(()=>{'use strict';window.__disableOutputs=()=>{const pdf=document.getElementById('outputPdf'),ppml=document.getElementById('outputPpml'),info=document.getElementById('outputInfo');if(pdf)pdf.disabled=true;if(ppml)ppml.disabled=true;if(info)info.textContent='';};})();
