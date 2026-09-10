@@ -35,6 +35,9 @@ jobs:
       - name: Build local browser dependencies
         run: node scripts/vendor-dependencies.mjs
 
+      - name: Remove build-only dependencies
+        run: rm -rf node_modules
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
