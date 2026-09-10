@@ -1,7 +1,7 @@
 {
   "name": "vdp-pro1100",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Autonomous browser-side VDP PRO 1100 preparation tool",
   "dependencies": {
     "dejavu-fonts-ttf": "2.37.3",
