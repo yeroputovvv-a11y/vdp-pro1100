@@ -1,12 +1,13 @@
 {
   "name": "vdp-pro1100",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Autonomous browser-side VDP PRO 1100 preparation tool",
   "dependencies": {
     "dejavu-fonts-ttf": "2.37.3",
     "jszip": "3.10.1",
     "mupdf": "1.28.0",
+    "pdf-lib": "1.17.1",
     "pdfjs-dist": "3.11.174",
     "xlsx-js-style": "1.2.0"
   }
